@@ -46,7 +46,7 @@
 (def left-bat (canvas/entity {:x 80 :y (- (/ canvas-height 2) 80) :w 40 :h 160}
                              (fn [{:keys [x y w h]}]
                                (let [not-at-top    (> y 0)
-                                     not-at-bottom (< y canvas-height)
+                                     not-at-bottom (< (+ y 160) canvas-height)
                                      new-y (cond
                                             (and (:up-left   @keys-down) not-at-top)    (- y 4)
                                             (and (:down-left @keys-down) not-at-bottom) (+ y 4)
@@ -63,7 +63,7 @@
 (def right-bat (canvas/entity {:x (- canvas-width 120) :y (- (/ canvas-height 2) 80) :w 40 :h 160}
                              (fn [{:keys [x y w h]}]
                                (let [not-at-top    (> y 0)
-                                     not-at-bottom (< y canvas-height)
+                                     not-at-bottom (< (+ y 160) canvas-height)
                                      new-y (cond
                                             (and (:up-right   @keys-down) not-at-top)    (- y 4)
                                             (and (:down-right @keys-down) not-at-bottom) (+ y 4)
@@ -90,9 +90,9 @@
                                                  (geometry/collision? (canvas/get-entity monet-canvas :left-bat)  val) (* -1 horizontal)
                                                  :else                                                                  horizontal)
                                  new-vertical (cond
-                                               (>= y canvas-height) -4
-                                               (<= y 0)             4
-                                               :else                vertical)]
+                                               (>= (+ y 40) canvas-height) -4
+                                               (<= y 0)                     4
+                                               :else                        vertical)]
                              (cond 
                               (< x 0)            (do (swap! right-score inc)
                                                      (initial-ball-state :right))

@@ -4,6 +4,10 @@
             [goog.dom :as dom]
             [goog.events :as events]))
 
+;; score
+(def left-score  (atom 0))
+(def right-score (atom 0))
+
 ;; events
 (def keycode->key
   {65 :up-left
@@ -70,28 +74,35 @@
                                    (canvas/fill-style "white")
                                    (canvas/fill-rect val)))))
 
-(def ball (canvas/entity {:x 0 :y 0 :w 10 :h 10 :horizontal 1 :vertical 1}
-                         (fn [{:keys [x y w h horizontal vertical] :as val}]
-                           (let [new-horizontal (cond
-                                                 (geometry/collision? (canvas/get-entity monet-canvas :right-bat) val) (* -1 horizontal)
-                                                 (geometry/collision? (canvas/get-entity monet-canvas :left-bat)  val) (* -1 horizontal)
-                                                 (>= x canvas-width)                  -1
-                                                 (<= x 0)                             1
-                                                 :else                                horizontal)
-                                 new-vertical (cond
+(def ball (let [initial-state {:x 0 :y 0 :w 10 :h 10 :horizontal 1 :vertical 1}]
+            (canvas/entity initial-state
+                           (fn [{:keys [x y w h horizontal vertical] :as val}]
+                             (let [new-horizontal (cond
+                                                   (geometry/collision? (canvas/get-entity monet-canvas :right-bat) val) (* -1 horizontal)
+                                                   (geometry/collision? (canvas/get-entity monet-canvas :left-bat)  val) (* -1 horizontal)
+                                                   :else                                                                  horizontal)
+                                   new-vertical (cond
                                                  (>= y canvas-height) -1
                                                  (<= y 0)             1
                                                  :else                vertical)]
-                             {:x (+ x new-horizontal)
-                              :y (+ y new-vertical)
-                              :w w
-                              :h h
-                              :horizontal new-horizontal
-                              :vertical new-vertical}))
-                         (fn [ctx val]
-                           (-> ctx
-                               (canvas/fill-style "white")
-                               (canvas/fill-rect val)))))
+                               (cond 
+                                (< x 0)            (do (swap! right-score inc)
+                                                       initial-state)
+                                (> x canvas-width) (do (swap! left-score inc)
+                                                       initial-state)
+                                :else              {:x (+ x new-horizontal)
+                                                    :y (+ y new-vertical)
+                                                    :w w
+                                                    :h h
+                                                    :horizontal new-horizontal
+                                                    :vertical new-vertical})))
+                           (fn [ctx val]
+                             (-> ctx
+                                 (canvas/fill-style "white")
+                                 (canvas/fill-rect val)
+                                 (canvas/stroke-style "white")
+                                 (canvas/stroke-width 10)
+                                 (canvas/text {:text (str @left-score "|" @right-score) :x (* 0.9 canvas-width) :y (* 0.1 canvas-height)}))))))
 
 (canvas/add-entity monet-canvas :background background)
 (canvas/add-entity monet-canvas :ball ball)

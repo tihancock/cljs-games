@@ -38,7 +38,7 @@
                                      (canvas/fill-style "black")
                                      (canvas/fill-rect val)))))
 
-(def helicopter (let [initial-state {:x (- (/ canvas-width 2) 20) :y (- (/ canvas-height 2) 20) :w 40 :h 40}]
+(def helicopter (let [initial-state {:x (- (/ canvas-width 5) 20) :y (- (/ canvas-height 2) 20) :w 40 :h 40}]
                   (canvas/entity 
                    initial-state
                    (fn [{:keys [x y w h] :as val}]
@@ -64,7 +64,7 @@
                          (canvas/text {:text @score :x (* 0.5 canvas-width) :y (* 0.1 canvas-height)}))))))
 
 (defn create-bar []
-  (let [height (* 0.9 (.random js/Math) canvas-height)
+  (let [height (* 0.75 (.random js/Math) canvas-height)
         y      (if (> 0.5 (.random js/Math))
                  (- canvas-height height)
                  0)]

@@ -40,13 +40,13 @@
                                      (canvas/fill-style "black")
                                      (canvas/fill-rect val)))))
 
-(def left-bat (canvas/entity {:x 20 :y (- (/ canvas-height 2) 20) :w 10 :h 40}
+(def left-bat (canvas/entity {:x 80 :y (- (/ canvas-height 2) 80) :w 40 :h 160}
                              (fn [{:keys [x y w h]}]
                                (let [not-at-top    (> y 0)
                                      not-at-bottom (< y canvas-height)
                                      new-y (cond
-                                            (and (:up-left   @keys-down) not-at-top)    (- y 1)
-                                            (and (:down-left @keys-down) not-at-bottom) (+ y 1)
+                                            (and (:up-left   @keys-down) not-at-top)    (- y 4)
+                                            (and (:down-left @keys-down) not-at-bottom) (+ y 4)
                                             :else                                       y)]
                                  {:x x
                                   :y new-y
@@ -57,13 +57,13 @@
                                    (canvas/fill-style "white")
                                    (canvas/fill-rect val)))))
 
-(def right-bat (canvas/entity {:x (- canvas-width 30) :y (- (/ canvas-height 2) 20) :w 10 :h 40}
+(def right-bat (canvas/entity {:x (- canvas-width 120) :y (- (/ canvas-height 2) 80) :w 40 :h 160}
                              (fn [{:keys [x y w h]}]
                                (let [not-at-top    (> y 0)
                                      not-at-bottom (< y canvas-height)
                                      new-y (cond
-                                            (and (:up-right   @keys-down) not-at-top)    (- y 1)
-                                            (and (:down-right @keys-down) not-at-bottom) (+ y 1)
+                                            (and (:up-right   @keys-down) not-at-top)    (- y 4)
+                                            (and (:down-right @keys-down) not-at-bottom) (+ y 4)
                                             :else                                        y)]
                                  {:x x
                                   :y new-y
@@ -74,7 +74,7 @@
                                    (canvas/fill-style "white")
                                    (canvas/fill-rect val)))))
 
-(def ball (let [initial-state {:x 0 :y 0 :w 10 :h 10 :horizontal 1 :vertical 1}]
+(def ball (let [initial-state {:x 0 :y 0 :w 40 :h 40 :horizontal 4 :vertical 4}]
             (canvas/entity initial-state
                            (fn [{:keys [x y w h horizontal vertical] :as val}]
                              (let [new-horizontal (cond
@@ -82,8 +82,8 @@
                                                    (geometry/collision? (canvas/get-entity monet-canvas :left-bat)  val) (* -1 horizontal)
                                                    :else                                                                  horizontal)
                                    new-vertical (cond
-                                                 (>= y canvas-height) -1
-                                                 (<= y 0)             1
+                                                 (>= y canvas-height) -4
+                                                 (<= y 0)             4
                                                  :else                vertical)]
                                (cond 
                                 (< x 0)            (do (swap! right-score inc)
@@ -101,7 +101,7 @@
                                  (canvas/fill-style "white")
                                  (canvas/fill-rect val)
                                  (canvas/stroke-style "white")
-                                 (canvas/stroke-width 10)
+                                 (canvas/font-style "30px Arial")
                                  (canvas/text {:text (str @left-score "|" @right-score) :x (* 0.9 canvas-width) :y (* 0.1 canvas-height)}))))))
 
 (canvas/add-entity monet-canvas :background background)

@@ -1,13 +1,15 @@
 <html>
     <body>
-        <canvas id="screen" width="1200" height="600">Canvas not supported</canvas>
+        <canvas id="screen">Canvas not supported</canvas>
         <script src="out/goog/base.js" type="text/javascript"></script>
         <script src="pong.js" type="text/javascript"></script>
         <script type="text/javascript">goog.require("pong.core");</script>
         <style>
           #screen {
-          width: 1200px;
-          height: 600px;
+          position: absolute;
+          margin: 2%;
+          width: 95%;
+          height: 90%;
           }
         </style>
     </body>

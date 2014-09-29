@@ -28,6 +28,9 @@
 ;; drawing
 (def canvas-dom (.getElementById js/document "screen"))
 
+(set! (.-width canvas-dom) (.-innerWidth js/window))
+(set! (.-height canvas-dom) (.-innerHeight js/window))
+
 (def monet-canvas (canvas/init canvas-dom "2d"))
 
 (def canvas-width (.-width canvas-dom))
@@ -102,7 +105,7 @@
                                  (canvas/fill-rect val)
                                  (canvas/stroke-style "white")
                                  (canvas/font-style "30px Arial")
-                                 (canvas/text {:text (str @left-score "|" @right-score) :x (* 0.9 canvas-width) :y (* 0.1 canvas-height)}))))))
+                                 (canvas/text {:text (str @left-score "|" @right-score) :x (* 0.5 canvas-width) :y (* 0.1 canvas-height)}))))))
 
 (canvas/add-entity monet-canvas :background background)
 (canvas/add-entity monet-canvas :ball ball)

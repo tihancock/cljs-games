@@ -30,6 +30,10 @@
   [f]
   (swap! app-state (fn [state] (assoc state :images (mapv f (:images state))))))
 
+(defn update-current-attempt!
+  [ca]
+  (swap! app-state #(assoc % :current-attempt ca)))
+
 (defn image [i]
   [:img {:on-click (fn []
                      (update-images! (fn [image] (if (= (:id i) (:id image))
@@ -41,9 +45,9 @@
                                                                                     (= (:id (:current-attempt @app-state)) (:id image)))
                                                                              (toggle-displayed image)
                                                                              image)))
-                                          (swap! app-state #(assoc % :current-attempt nil))) 1000)
-                         (swap! app-state #(assoc % :current-attempt nil)))
-                       (swap! app-state #(assoc % :current-attempt i))))
+                                          (update-current-attempt! nil)) 1000)
+                         (update-current-attempt! nil))
+                       (update-current-attempt! i)))
          :style {"width" "25%"
                  "height" "25%"
                  "opacity" (if (:displayed i) 1.0 0.0)}

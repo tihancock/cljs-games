@@ -19,7 +19,8 @@
              {:id 16 :path "resources/8.jpg" :displayed true}])
 
 (def app-state
-  (r/atom {:images (shuffle images)}))
+  (r/atom {:images          (shuffle images)
+           :current-attempt nil}))
 
 (defn toggle-displayed
   [image]
@@ -29,13 +30,20 @@
   [f]
   (swap! app-state (fn [state] (assoc state :images (mapv f (:images state))))))
 
-(defn hide-all-images []
-  (update-images! #(assoc % :displayed false)))
-
 (defn image [i]
-  [:img {:on-click #(update-images! (fn [image] (if (= (:id i) (:id image))
-                                                  (toggle-displayed image)
-                                                  image)))
+  [:img {:on-click (fn []
+                     (update-images! (fn [image] (if (= (:id i) (:id image))
+                                                   (toggle-displayed image)
+                                                   image)))
+                     (if (:current-attempt @app-state)
+                       (if (not= (:path (:current-attempt @app-state)) (:path i))
+                         (js/setTimeout (fn [] (update-images! (fn [image] (if (or (= (:id i) (:id image))
+                                                                                    (= (:id (:current-attempt @app-state)) (:id image)))
+                                                                             (toggle-displayed image)
+                                                                             image)))
+                                          (swap! app-state #(assoc % :current-attempt nil))) 1000)
+                         (swap! app-state #(assoc % :current-attempt nil)))
+                       (swap! app-state #(assoc % :current-attempt i))))
          :style {"width" "25%"
                  "height" "25%"
                  "opacity" (if (:displayed i) 1.0 0.0)}
@@ -43,7 +51,7 @@
 
 (defn timer []
   (fn []
-    (js/setTimeout hide-all-images 2000)
+    (js/setTimeout (fn [] (update-images! #(assoc % :displayed false))) 2000)
     [:div]))
 
 (defn image-grid []

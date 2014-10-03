@@ -48,6 +48,7 @@
                                           (update-current-attempt! nil)) 1000)
                          (update-current-attempt! nil))
                        (update-current-attempt! i)))
+         :on-drag-start (constantly false)
          :style {"width" "25%"
                  "height" "25%"
                  "opacity" (if (:displayed i) 1.0 0.0)}
